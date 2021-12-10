@@ -37,8 +37,59 @@ async function formSubmit(formData) {
   });
 }
 
+const history = new Map();
+const rateLimit = (ip, limit = 3) => {
+  if (!history.has(ip)) {
+    history.set(ip, 0);
+  }
+  if (history.get(ip) > limit) {
+    throw new Error();
+  }
+  history.set(ip, history.get(ip) + 1);
+};
+
+const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const nameValid = /[a-zA-ZЁёА-я]+$/;
+
+const validate = (body) => {
+  const { email, name, password, confirmPassword } = body;
+  if (!email || !name || !password || !confirmPassword) {
+    throw new Error();
+  }
+  if (!emailValid.test(email)) {
+    throw new Error();
+  }
+  if (!nameValid.test(name)) {
+    throw new Error();
+  }
+  if (password !== confirmPassword) {
+    throw new Error();
+  }
+};
+
 module.exports = async (req, res) => {
-  console.log(process.env.EMAIL_PASSWORD);
+  try {
+    rateLimit(req.headers["x-real-ip"], 5);
+  } catch (e) {
+    return res.status(429).json({
+      status: 429,
+      errors: ["too many requests"],
+      result: {
+        success: false,
+      },
+    });
+  }
+  try {
+    validate(req.body);
+  } catch (e) {
+    return res.status(403).json({
+      status: 403,
+      errors: ["Validation error"],
+      result: {
+        success: false,
+      },
+    });
+  }
   const result = await formSubmit(req.body);
   res.json({ result });
 };
