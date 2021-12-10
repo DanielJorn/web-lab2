@@ -38,6 +38,7 @@ async function formSubmit(formData) {
 }
 
 module.exports = async (req, res) => {
+  console.log(process.env.EMAIL_PASSWORD);
   const result = await formSubmit(req.body);
   res.json({ result });
 };
