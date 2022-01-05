@@ -3,7 +3,7 @@ import sanitizeHtml from "sanitize-html";
 require("dotenv").config();
 
 const transport = createTransport({
-  host: process.env.HOST,
+  host: process.env.EMAIL_HOST,
   port: process.env.EMAIL_PORT,
   secure: false,
   auth: {
