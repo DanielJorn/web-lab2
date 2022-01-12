@@ -17,7 +17,7 @@ async function sendMail(options) {
     await transport.sendMail(options);
     return { success: true };
   } catch (error) {
-    throw new Error(error?.message);
+    throw CustomError("Error in email sending", 500);
   }
 }
 const from = `Paul Vasssssss - ${process.env.EMAIL_ADRESS}`;

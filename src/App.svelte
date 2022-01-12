@@ -13,9 +13,11 @@
         },
         body: JSON.stringify(formData),
       });
-      const res1 = await res.json();
+      const resultJSON = await res.json();
       result.set(
-        res1.result.success ? "email was sent" : res1.errors.join("\n"),
+        resultJSON.result.success
+          ? "email was sent"
+          : resultJSON.errors.join("\n"),
       );
     } catch (e) {
       result.set("Error:", e.message);
